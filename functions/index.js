@@ -51,7 +51,7 @@ exports.syncUserCount = functions
 const dataApp = express();
 dataApp.use(cors({ origin: true }));
 dataApp.get("/versionNumber", (req, res) => {
-  const versionNumber = "0.0.8";
+  const versionNumber = "0.0.9";
   res.status(200).json({ versionNumber });
 });
 
@@ -87,12 +87,3 @@ migrateApp.get("/", async (req, res) => {
 
 exports.migrateDatabase = functions.https.onRequest(migrateApp);
 
-// to be removed - start
-const versionApp = express();
-versionApp.use(cors({ origin: true }));
-versionApp.get("/", (req, res) => {
-  const versionNumber = "0.0.8";
-  res.status(200).json({ versionNumber });
-});
-exports.getVersionNumber = functions.https.onRequest(versionApp);
-// to be removed - end
