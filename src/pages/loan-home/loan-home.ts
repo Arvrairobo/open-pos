@@ -14,6 +14,8 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { StorageProvider } from "../../providers/storage/storage";
 import firebase from "firebase";
 import { GettersetterProvider } from "../../providers/gettersetter/gettersetter";
+import { empty } from "rxjs/Observer";
+import { GeolocationService } from "../../providers/geolocation/geolocation.service";
 
 /**
  * Generated class for the LoanHomePage page.
@@ -40,6 +42,7 @@ export class LoanHomePage {
     public events: Events,
     private modal: ModalController,
     private view: ViewController,
+    public gps: GeolocationService,
   ) {
     this.getUserData();
 
@@ -129,7 +132,21 @@ export class LoanHomePage {
   //@ts-ignore
   randovar = this.translateConfigService.getTranslatedMessage("Close");
 
-  submitloanform() {
+  emptyField = false;
+
+  async submitloanform() {
+    if (
+      this.loan1 == undefined ||
+      this.loan2 == undefined ||
+      this.loan3 == undefined ||
+      this.loan4 == undefined ||
+      this.loan5 == undefined ||
+      this.loan6 == undefined
+    ) {
+      this.emptyField = true;
+      return;
+    }
+    this.emptyField = false;
     this.loanvar.push({
       q: this.loanq1,
       a: this.loan1,
@@ -154,6 +171,24 @@ export class LoanHomePage {
       q: this.loanq6,
       a: this.loan6,
     });
+
+    await this.gps
+      .getCoordinates()
+      .then(coordinates => {
+        const c: any = coordinates;
+        this.loanvar.push({
+          q: "Location",
+          a: "Latitude: " + c.latitude + " Longitude: " + c.longitude,
+        });
+      })
+      .catch(e => {
+        this.loanvar.push({
+          q: "Location",
+          a: "Error obtaining location",
+        });
+      });
+
+    console.log(this.loanvar);
 
     firebase
       .firestore()

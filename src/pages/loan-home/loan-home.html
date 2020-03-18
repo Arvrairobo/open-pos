@@ -41,7 +41,8 @@
     </ion-row>
 
     <button ion-button style="background-color: orange;" (click)="showloanform()"> {{"Interested in Applying for Loan"|translate}}</button>
-
+    
+    <ion-row padding style="color: red; font-size: medium;" *ngIf="emptyField">Some fields are empty. Please fill them all</ion-row>
     <ion-card *ngIf="showloan==1" padding>
       {{loanq1}}
       <ion-input style="background-color: #d8d7d7;" placeholder="{{'Enter Details Here'|translate}}"  [(ngModel)]="loan1"></ion-input>
